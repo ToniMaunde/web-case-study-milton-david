@@ -4,6 +4,9 @@ This is part of the application I was able to buid for the case study I chose (D
 ## Prerequisites
 Have Node.js version >= 14 installed on your machine and knowing a tiny bit of React.js and SVGs.
 
+## Tech stack
+This includes React.js, Node.js, Prisma, SQlite and Tailwind CSS.
+
 ## Installing
 Clone the repository
 ```sh
