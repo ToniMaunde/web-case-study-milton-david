@@ -47,9 +47,11 @@ export default function BottomNavbar() {
   return (
     <ul className="bg-white fixed left-0 right-0 bottom-0 grid grid-cols-4 p-4 items-center gap-1">
       { locations.map(({ pathName, name, icon }) => (
-        <li key={name} className={customClasses(pathName)}>
-          <Icon {...icon} customClasses="w-5 h-5"/>
-          <Link to={pathName}>{name}</Link>
+        <li key={name}>
+          <Link to={pathName} className={customClasses(pathName)}>
+            <Icon {...icon} customClasses="w-5 h-5"/>
+            <span>{name}</span>
+          </Link>
         </li>
       ))}
     </ul>
