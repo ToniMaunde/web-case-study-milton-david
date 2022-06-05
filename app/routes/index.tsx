@@ -36,8 +36,8 @@ export default function Index() {
           <label className="flex flex-col">
             <span className="font-semibold text-gray">Numero de celular</span>
             <span className="grid grid-cols-3">
-              <input className="p-3 bg-primary text-white rounded rounded-r-none border-gray border-2 border-r-0 focus:border-0 focus:outline-primary" name="countryCode" type="tel" inputMode="numeric" list="country-codes"  defaultValue="+258" required/>
-              <input className="col-span-2 p-3 rounded rounded-l-none border-l-0 border-2 border-gray focus:border-0 focus:outline-primary" name="phoneNumber" type="tel" inputMode="numeric" min={9} required/>
+              <input className="p-3 bg-primary text-white rounded rounded-r-none border-gray border-2 border-r-0 focus:border-0 focus:outline-primary" name="countryCode" type="tel" inputMode="numeric" list="country-codes"  defaultValue="+258" maxLength={3} required/>
+              <input className="col-span-2 p-3 rounded rounded-l-none border-l-0 border-2 border-gray focus:border-0 focus:outline-primary" name="phoneNumber" type="tel" inputMode="numeric" minLength={9} required/>
             </span>
             <small className="text-xs text-gray">Uma SMS sera enviada com um codigo de verificacao</small>
           </label>
