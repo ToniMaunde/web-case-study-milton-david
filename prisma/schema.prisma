@@ -10,6 +10,7 @@ generator client {
 model Customer {
   id          String @id @default(cuid())
   phoneNumber String @unique
+  fullName    String
   email       String
 
   createdAt DateTime @default(now())

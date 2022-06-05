@@ -13,6 +13,7 @@ type ActionData = {
   formErrorMessage?: string;
   fields?: {
     phoneNumber: string | FormDataEntryValue | null;
+    fullName: string | FormDataEntryValue | null;
     intent: string | FormDataEntryValue | null;
   }
 };
@@ -25,6 +26,7 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const intent = form.get("intent");
   const phoneNumber = form.get("phoneNumber");
+  const fullName = form.get("fullName");
   const one = form.get("one") as string;
   const two = form.get("two") as string;
   const three = form.get("three") as string;
@@ -36,25 +38,27 @@ export const action: ActionFunction = async ({ request }) => {
   const undefinedChars = verificationNumbers.filter(char => char === undefined);
   const longChars = verificationNumbers.filter(char => char.length > 1);
   
-  if (undefinedChars.length > 0) return badRequest({ formError: "400", formErrorMessage: "Codigo de confirmacao incompleto", fields: { intent, phoneNumber }});
+  if (undefinedChars.length > 0) return badRequest({ formError: "400", formErrorMessage: "Codigo de confirmacao incompleto", fields: { intent, phoneNumber, fullName }});
 
-  if (longChars.length > 0) return badRequest({ formError: "400", formErrorMessage: "Cada caracter do codigo de verificacao deve ter apenas um digito.", fields: { intent, phoneNumber }});
+  if (longChars.length > 0) return badRequest({ formError: "400", formErrorMessage: "Cada caracter do codigo de verificacao deve ter apenas um digito.", fields: { intent, phoneNumber, fullName }});
 
   // TODO: add refs to the Input components to move from one input to the other after one
   // char is inserted and to target the inputs with errors
 
   // TODO: hook the app to an OTP service. Currently any verification number is accepted.
 
-  if (typeof phoneNumber !== "string") {
-    return badRequest({ formError: "400", formErrorMessage: "Numero de celular invalido", fields: { intent, phoneNumber }});
+  if (typeof phoneNumber !== "string" ||
+    typeof fullName !== "string"
+  ) {
+    return badRequest({ formError: "400", formErrorMessage: "Dados invalidos", fields: { intent, phoneNumber, fullName }});
   } else {
     if (intent === "sign up") {
-      const customer = await signup(phoneNumber);
+      const customer = await signup({ phoneNumber, fullName});
       if (!customer) {
         return badRequest({
           formError: "400",
           formErrorMessage: "Ocorreu um erro ao tentar criar o seu perfil.",
-          fields: { intent, phoneNumber },
+          fields: { intent, phoneNumber, fullName },
         });
       }
       return createCustomerSession(customer.id, "/pedidos-pendentes");
@@ -65,6 +69,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Verificacao() {
   const [searchParams] = useSearchParams();
   const phoneNumber = searchParams.get("phoneNumber") as string;
+  const fullName = searchParams.get("fullName") as string;
   const intent = searchParams.get("intent") as string;
 
   const inputProps: TInput = {
@@ -87,6 +92,7 @@ export default function Verificacao() {
         </p>
         <Form method="post" className="mt-4 flex flex-col">
           <input type="hidden" name="phoneNumber" value={phoneNumber || (actionData?.fields?.phoneNumber) as string} />
+          <input type="hidden" name="fullName" value={fullName || (actionData?.fields?.fullName) as string} />
           <input type="hidden" name="intent" value={intent || (actionData?.fields?.intent) as string} />
           <label htmlFor="one" className="font-semibold text-gray">Codigo de verificacao</label>
           <div className="grid grid-cols-6 gap-1">

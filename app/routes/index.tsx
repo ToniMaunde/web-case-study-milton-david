@@ -24,7 +24,7 @@ export default function Index() {
 
   return (
     <>
-      <Navbar />
+      <Navbar route="/" />
       <main className="flex flex-col p-2 mt-6">
         <h1 className="font-bold text-4xl text-primary">Balcao Digital</h1>
         <h2 className="mt-4 font-semibold text-xl text-gray leading-7">

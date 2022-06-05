@@ -4,9 +4,13 @@ import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
 
+type SignUpForm = {
+  phoneNumber: string;
+  fullName: string;
+};
 
-export async function signup(phoneNumber: string) {
-  const customer = await prisma.customer.create({ data: { phoneNumber, email: ""} });
+export async function signup({phoneNumber, fullName} : SignUpForm) {
+  const customer = await prisma.customer.create({ data: { phoneNumber, fullName, email: ""} });
   return { id: customer.id, phoneNumber: customer.phoneNumber };
 };
 
