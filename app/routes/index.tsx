@@ -1,31 +1,7 @@
 import { Form, Link, useSearchParams } from "@remix-run/react";
-import Navbar from "~/components/Navbar";
+import { redirect } from "@remix-run/server-runtime";
 import type { ActionFunction } from "@remix-run/server-runtime";
-import { json } from "@remix-run/server-runtime";
-
-import { prisma } from "~/db.server";
-import { signup, createUserSession } from "~/utils/session.server";
-
-/*
-  422 = Unprocessable Entity
-  404 = Not Found
-  401 = Unauthorized
-  400 = Bad Request
-*/
-type ActionData = {
-  formError?: "422" | "404" | "401" | "400";
-  formErrorMessage?: string;
-  fields?: {
-    intent: string | FormDataEntryValue | null;
-    redirectTo: string | FormDataEntryValue | null;
-    username: string | FormDataEntryValue | null;
-    password: string | FormDataEntryValue | null;
-  }
-};
-
-const badRequest = (data: ActionData) => {
-  return json(data, { status: 400 })
-};
+import Navbar from "~/components/Navbar";
 
 export const action: ActionFunction = async ({
   request
@@ -34,26 +10,9 @@ export const action: ActionFunction = async ({
   const redirectTo = form.get("redirectTo");
   const countryCode = form.get("countryCode");
   const phoneNumber = form.get("phoneNumber");
+  const completePhoneNumber = `${countryCode}${phoneNumber}`;
 
-  const userExists = await prisma.user.findFirst({
-    where: { username },
-  });
-
-  if (userExists) return badRequest({
-    fields,
-    formError: "422",
-    formErrorMessage: `The username ${username} is taken, choose a different one.`,
-  });
-  
-  const user = await signup({ username, password });
-  if (!user) {
-    return badRequest({
-      fields,
-      formError: "400",
-      formErrorMessage: "Something went wrong trying to sign you up.",
-    });
-  }
-  return createUserSession(user.id, redirectTo);
+  return redirect(`/verificacao?phoneNumber=${completePhoneNumber}`, { status: 302 });
 };
 
 export default function Index() {
@@ -71,7 +30,7 @@ export default function Index() {
             type="hidden"
             name="redirectTo"
             value={
-              searchParams.get("redirectTo") ?? "/codigo-de-verificacao"
+              searchParams.get("redirectTo") ?? "/verificacao"
             }
           />
           <label className="flex flex-col">

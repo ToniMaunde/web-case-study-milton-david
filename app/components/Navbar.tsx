@@ -8,7 +8,7 @@ export default function Navbar() {
         <img src={logo} alt="Standard Bank logo" className="mr-2 w-5 h-fit"/>
         <Link to="/">Standard Bank</Link>
       </p>
-      <Link to="/" className="ml-auto p-2 bg-primary text-sm font-semibold text-white rounded">Registar-se</Link>
+      <Link to="/entrar" className="ml-auto p-2 bg-primary text-sm font-semibold text-white rounded">Entrar</Link>
     </nav>
   )
 }
