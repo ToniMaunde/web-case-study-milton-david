@@ -6,9 +6,9 @@ export default function Navbar() {
     <nav className="flex items-center p-2">
       <p className="flex text-primary font-semibold text-xl w-fit">
         <img src={logo} alt="Standard Bank logo" className="mr-2 w-5 h-fit"/>
-        <span>Standard Bank</span>
+        <Link to="/">Standard Bank</Link>
       </p>
-      <Link to="/registar-se" className="ml-auto p-2 bg-primary text-sm font-semibold text-white rounded">Registar-se</Link>
+      <Link to="/" className="ml-auto p-2 bg-primary text-sm font-semibold text-white rounded">Registar-se</Link>
     </nav>
   )
 }
