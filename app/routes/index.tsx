@@ -1,7 +1,27 @@
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useSearchParams } from "@remix-run/react";
+import { redirect } from "@remix-run/server-runtime";
+import type { ActionFunction } from "@remix-run/server-runtime";
 import Navbar from "~/components/Navbar";
 
+export const action: ActionFunction = async ({
+  request
+}) => {
+  const form = await request.formData();
+  const redirectTo = form.get("redirectTo");
+  const countryCode = form.get("countryCode");
+  const phoneNumber = form.get("phoneNumber");
+  const completePhoneNumber = `${countryCode}${phoneNumber}`;
+  const intent = "sign up";
+
+  // TODO: check whether the number is registered or not before redirecting in order to alert
+  // the user that he could had simply clicked on the "Entrar" button to log in.
+
+  return redirect(`/verificacao?phoneNumber=${completePhoneNumber}&intent=${intent}`, { status: 302 });
+};
+
 export default function Index() {
+  const [searchParams] = useSearchParams();
+
   return (
     <>
       <Navbar />
@@ -10,11 +30,18 @@ export default function Index() {
           Acesse novamente a aplicação e veja o estado dos seus pedidos. 
         </h1>
         <Form method="post" className="mt-4 flex flex-col">
+          <input
+            type="hidden"
+            name="redirectTo"
+            value={
+              searchParams.get("redirectTo") ?? "/verificacao"
+            }
+          />
           <label className="flex flex-col">
             <span className="font-semibold text-gray">Numero de celular</span>
             <span className="grid grid-cols-3">
-              <input className="p-3 bg-primary text-white rounded rounded-r-none border-gray border-2 border-r-0 focus:border-0 focus:outline-primary" name="countryCode" type="tel" inputMode="numeric" list="country-codes"  defaultValue={"+258"}/>
-              <input className="col-span-2 p-3 rounded rounded-l-none border-l-0 border-2 border-gray focus:border-0 focus:outline-primary" type="tel" inputMode="numeric"/>
+              <input className="p-3 bg-primary text-white rounded rounded-r-none border-gray border-2 border-r-0 focus:border-0 focus:outline-primary" name="countryCode" type="tel" inputMode="numeric" list="country-codes"  defaultValue="+258" maxLength={3} required/>
+              <input className="col-span-2 p-3 rounded rounded-l-none border-l-0 border-2 border-gray focus:border-0 focus:outline-primary" name="phoneNumber" type="tel" inputMode="numeric" minLength={9} required/>
             </span>
             <small className="text-xs text-gray">Uma SMS sera enviada com um codigo de verificacao</small>
           </label>
