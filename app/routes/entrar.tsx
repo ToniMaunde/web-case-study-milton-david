@@ -2,7 +2,6 @@ import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { redirect, json } from "@remix-run/server-runtime";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import Navbar from "~/components/Navbar";
-import { prisma } from "~/db.server";
 import { getCustomerId, signin} from "~/utils/session.server";
 
 type ActionData = {
