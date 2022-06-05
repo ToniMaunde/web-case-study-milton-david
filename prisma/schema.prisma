@@ -35,6 +35,7 @@ model Service {
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  Ticket      Ticket[]
 }
 
 model Ticket {
@@ -47,4 +48,6 @@ model Ticket {
   agentId    String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   customerId String
+  service    Service  @relation(fields: serviceId, references: [id], onUpdate: Cascade)
+  serviceId  String
 }
