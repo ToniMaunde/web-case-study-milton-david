@@ -11,18 +11,6 @@ export async function signup(phoneNumber: string) {
 };
 
 export async function signin() {
-  // const user = await prisma.user.findUnique({
-  //   where: { username: username },
-  // });
-  // if (!user) return null;
-
-  // const isCorrectPassword = await bcrypt.compare(
-  //   password,
-  //   user.password
-  // );
-  // if (!isCorrectPassword) return null;
-
-  // return { id: user.id, username };
 };
 
 const sessionSecret = process.env.SESSION_SECRET;

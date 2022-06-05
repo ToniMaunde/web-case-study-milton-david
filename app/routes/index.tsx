@@ -11,8 +11,12 @@ export const action: ActionFunction = async ({
   const countryCode = form.get("countryCode");
   const phoneNumber = form.get("phoneNumber");
   const completePhoneNumber = `${countryCode}${phoneNumber}`;
+  const intent = "sign up";
 
-  return redirect(`/verificacao?phoneNumber=${completePhoneNumber}`, { status: 302 });
+  // TODO: check whether the number is registered or not before redirecting in order to alert
+  // the user that he could had simply clicked on the "Entrar" button to log in.
+
+  return redirect(`/verificacao?phoneNumber=${completePhoneNumber}&intent=${intent}`, { status: 302 });
 };
 
 export default function Index() {
