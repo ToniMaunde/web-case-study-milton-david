@@ -1,6 +1,6 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 import { redirect } from "@remix-run/server-runtime";
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
 
@@ -10,11 +10,17 @@ type SignUpForm = {
 };
 
 export async function signup({phoneNumber, fullName} : SignUpForm) {
-  const customer = await prisma.customer.create({ data: { phoneNumber, fullName, email: ""} });
+  let number = phoneNumber.trim();
+  number = `+${number}`;
+  console.log(number);
+  const customer = await prisma.customer.create({ data: { phoneNumber: number, fullName, email: ""} });
   return { id: customer.id, phoneNumber: customer.phoneNumber };
 };
 
-export async function signin() {
+export async function signin(phoneNumber: string) {
+  const customer = await prisma.customer.findUnique({ where: { phoneNumber } });
+  if (!customer) return null;
+  return { id: customer.id, phoneNumber: customer.phoneNumber };
 };
 
 const sessionSecret = process.env.SESSION_SECRET;
@@ -56,7 +62,7 @@ async function getAgentSession(request: Request) {
 
 export async function getCustomerId(request: Request) {
   const session = await getCustomerSession(request);
-  const customerId = session.get("userId");
+  const customerId = session.get("customerId");
   if (!customerId || typeof customerId !== "string") return null;
   return customerId;
 };
@@ -70,9 +76,10 @@ export async function getAgentId(request: Request) {
 
 export async function createCustomerSession(
   customerId: string,
-  redirectTo: string
+  redirectTo: string,
+  request: Request
 ) {
-  const session = await customerSessionStorage.getSession();
+  const session = await getCustomerSession(request);
   session.set("customerId", customerId);
   return redirect(redirectTo, {
     headers: {

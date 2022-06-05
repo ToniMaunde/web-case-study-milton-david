@@ -5,8 +5,7 @@ import Navbar from "~/components/Navbar";
 import { Input } from "~/components/Input";
 import type { TInput } from "~/components/Input";
 import { signup, createCustomerSession } from "~/utils/session.server";
-
-// TODO: solve the warning regarding the Input component
+import { prisma } from "~/db.server";
 
 type ActionData = {
   formError?: "422" | "404" | "401" | "400";
@@ -51,18 +50,21 @@ export const action: ActionFunction = async ({ request }) => {
     typeof fullName !== "string"
   ) {
     return badRequest({ formError: "400", formErrorMessage: "Dados invalidos", fields: { intent, phoneNumber, fullName }});
-  } else {
-    if (intent === "sign up") {
-      const customer = await signup({ phoneNumber, fullName});
-      if (!customer) {
-        return badRequest({
-          formError: "400",
-          formErrorMessage: "Ocorreu um erro ao tentar criar o seu perfil.",
-          fields: { intent, phoneNumber, fullName },
-        });
-      }
-      return createCustomerSession(customer.id, "/pedidos-pendentes");
+  } 
+  if (intent === "sign up") {
+    const customer = await signup({ phoneNumber, fullName});
+    if (!customer) {
+      return badRequest({
+        formError: "400",
+        formErrorMessage: "Ocorreu um erro ao tentar criar o seu perfil.",
+        fields: { intent, phoneNumber, fullName },
+      });
     }
+    return createCustomerSession(customer.id, "/pedidos-pendentes", request);
+  } else {
+    const customer = await prisma.customer.findFirst({ where: { phoneNumber }});
+    const customerId = customer?.id as string;
+    return createCustomerSession(customerId, "/pedidos-pendentes", request);
   }
 };
 
@@ -73,7 +75,7 @@ export default function Verificacao() {
   const intent = searchParams.get("intent") as string;
 
   const inputProps: TInput = {
-    type: "number",
+    type: "text",
     inputMode: "numeric",
     maxLength: 1,
     min: 0,
