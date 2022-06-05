@@ -14,36 +14,29 @@ import {
 } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "./styles/tailwind.css";
-import { getUser } from "./session.server";
+import indexStyle from "./styles/index.css";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
+  return [
+    { rel: "stylesheet", href: tailwindStylesheetUrl, as: "style" },
+    { rel: "stylesheet", href: indexStyle, as: "style" },
+  ];
 };
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Remix Notes",
+  title: "Balcao Digital | Standard Bank",
   viewport: "width=device-width,initial-scale=1",
 });
 
-type LoaderData = {
-  user: Awaited<ReturnType<typeof getUser>>;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  return json<LoaderData>({
-    user: await getUser(request),
-  });
-};
-
 export default function App() {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full w-full scroll-smooth text-base">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="flex flex-col font-body w-full min-h-full font-normal leading-7 bg-bg">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
